@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1071467755265",
+    "project_id": "film-stories",
+    "storage_bucket": "film-stories.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1071467755265:android:13e0a22c761513c5e98d00",
+        "android_client_info": {
+          "package_name": "com.example.movie_stories"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1071467755265-n3o0bp5jrjmkvk378t0sd555oeaon0in.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0kPv6oKOXbdVQlhwIPJx4ik81x018s6U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1071467755265-n3o0bp5jrjmkvk378t0sd555oeaon0in.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
