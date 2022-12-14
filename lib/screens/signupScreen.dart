@@ -1,6 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:movie_stories/resources/auth_methods.dart';
 import 'package:movie_stories/utils/colors.dart';
+import 'package:movie_stories/utils/utils.dart';
 import 'package:movie_stories/widgets/text_filed_input.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -15,6 +19,8 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
+  Uint8List? _image;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -23,6 +29,34 @@ class _SignupScreenState extends State<SignupScreen> {
     _passwordController.dispose();
     _bioController.dispose();
     _usernameController.dispose();
+  }
+
+  void seletImage() async {
+    Uint8List im = await pickImage(ImageSource.gallery);
+    setState(() {
+      _image = im;
+    });
+  }
+
+  void signUpUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    String res = await AuthMethods().signUpUser(
+      email: _emailController.text,
+      password: _passwordController.text,
+      username: _usernameController.text,
+      bio: _bioController.text,
+      file: _image!,
+    );
+
+    if (res != 'success') {
+      showSnackBar(res, context);
+    }
+    setState(() {
+      _isLoading = false;
+    });
+    //print(res);
   }
 
   @override
@@ -45,16 +79,21 @@ class _SignupScreenState extends State<SignupScreen> {
           const SizedBox(height: 64),
           Stack(
             children: [
-              const CircleAvatar(
-                radius: 64,
-                backgroundImage: NetworkImage(
-                    'https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1159&q=80'),
-              ),
+              _image != null
+                  ? CircleAvatar(
+                      radius: 64,
+                      backgroundImage: MemoryImage(_image!),
+                    )
+                  : const CircleAvatar(
+                      radius: 64,
+                      backgroundImage: NetworkImage(
+                          'https://thumbs.dreamstime.com/b/cameraman-filming-silhouette-9058168.jpg'),
+                    ),
               Positioned(
                   bottom: -10,
                   left: 80,
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: seletImage,
                     icon: const Icon(Icons.add_a_photo),
                   ))
             ],
@@ -91,9 +130,15 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
           const SizedBox(height: 64),
           InkWell(
-            onTap: () {},
+            onTap: signUpUser,
             child: Container(
-              child: const Text('Log In'),
+              child: _isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: primaryColor,
+                      ),
+                    )
+                  : const Text('Sign Up'),
               width: double.infinity,
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(vertical: 12),
