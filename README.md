@@ -1,6 +1,6 @@
-# movie_stories
+# Film Stories
 
-A new Flutter project.
+A new Flutter project about people loving movie frames 🎞️
 
 ## Getting Started
 
