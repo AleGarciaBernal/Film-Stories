@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_stories/providers/user_provider.dart';
 import 'package:movie_stories/responsive/mobile_screen_layout.dart';
 import 'package:movie_stories/responsive/responsive_layout_screen.dart';
 import 'package:movie_stories/responsive/web_screen_layout.dart';
@@ -9,6 +10,7 @@ import 'package:movie_stories/screens/loginScreen.dart';
 import 'package:movie_stories/screens/signupScreen.dart';
 import 'package:movie_stories/utils/colors.dart';
 import 'package:movie_stories/responsive/responsive_layout_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,39 +34,44 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false, //quitar el banner de "debug"
-      title: 'Film Stories', //nombre de la aplicacion
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: webBackgroundColor,
-      ),
-      //poner un tema
-      home: StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active) {
-            if (snapshot.hasData) {
-              return const ResponsiveLayout(
-                mobileScreenLayout: MobileScreenLayout(),
-                webScreenLayout: WebScreenLayout(),
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text('${snapshot.error}'),
-              );
-            }
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-                child: CircularProgressIndicator(
-              color: primaryColor,
-            ));
-          }
-          return const SignupScreen();
-        },
-      ),
-
-//      ),
-    );
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => UserProvider(),),
+          ],
+        child: MaterialApp(
+            debugShowCheckedModeBanner: false, //quitar el banner de "debug"
+            title: 'Film Stories', //nombre de la aplicacion
+            theme: ThemeData.dark().copyWith(
+              scaffoldBackgroundColor: webBackgroundColor,
+            ),
+            //poner un tema
+            home: StreamBuilder(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.active) {
+                  //ver si se hizo una conexion
+                  if (snapshot.hasData) {
+                    //revisar si existe data
+                    return const ResponsiveLayout(
+                      mobileScreenLayout: MobileScreenLayout(),
+                      webScreenLayout: WebScreenLayout(),
+                    );
+                  } else if (snapshot.hasError) {
+                    //si no hay data, pero hay conexion
+                    return Center(
+                      child: Text('${snapshot.error}'),
+                    );
+                  }
+                }
+                // No hay conexion entonces (esperando)
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return const LoginScreen();
+                //si el usuario no ha sido autenticado
+              },
+            )));
   }
 }

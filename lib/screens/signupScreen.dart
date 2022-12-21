@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:movie_stories/resources/auth_methods.dart';
+import 'package:movie_stories/screens/loginScreen.dart';
 import 'package:movie_stories/utils/colors.dart';
 import 'package:movie_stories/utils/utils.dart';
 import 'package:movie_stories/widgets/text_filed_input.dart';
+import 'package:movie_stories/responsive/responsive_layout_screen.dart';
+import 'package:movie_stories/responsive/mobile_screen_layout.dart';
+import 'package:movie_stories/responsive/web_screen_layout.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -38,6 +42,11 @@ class _SignupScreenState extends State<SignupScreen> {
     });
   }
 
+  void navigateToLogIn() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+  }
+
   void signUpUser() async {
     setState(() {
       _isLoading = true;
@@ -50,13 +59,26 @@ class _SignupScreenState extends State<SignupScreen> {
       file: _image!,
     );
 
-    if (res != 'success') {
+    setState(() {
+        _isLoading = false;
+      });
+
+    if (res == "success") {
+      setState(() {
+        _isLoading = false;
+      });
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const ResponsiveLayout(
+            mobileScreenLayout: MobileScreenLayout(),
+            webScreenLayout: WebScreenLayout(),
+          ),
+        ),
+      );
+      // show the error
       showSnackBar(res, context);
     }
-    setState(() {
-      _isLoading = false;
-    });
-    //print(res);
   }
 
   @override
@@ -73,7 +95,7 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
           SvgPicture.asset(
             'assets/popcorn.svg',
-            color: primaryColor,
+            color: secondaryColor,
             height: 64,
           ),
           const SizedBox(height: 64),
@@ -124,7 +146,7 @@ class _SignupScreenState extends State<SignupScreen> {
             height: 24,
           ),
           TextFieldInput(
-            hintText: 'Enter bio',
+            hintText: 'Favorite Movie',
             textInputType: TextInputType.text,
             textEditingController: _bioController,
           ),
@@ -132,7 +154,8 @@ class _SignupScreenState extends State<SignupScreen> {
           InkWell(
             onTap: signUpUser,
             child: Container(
-              child: _isLoading? const Center(
+              child: _isLoading
+                  ? const Center(
                       child: CircularProgressIndicator(
                         color: primaryColor,
                       ),
@@ -158,14 +181,14 @@ class _SignupScreenState extends State<SignupScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                child: Text('No tiene cuenta?'),
+                child: Text('Are you already one of us? '),
                 padding: const EdgeInsets.symmetric(vertical: 8),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: navigateToLogIn,
                 child: Container(
-                  child: Text(
-                    'Sign up',
+                  child: const Text(
+                    'Log In',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 8),

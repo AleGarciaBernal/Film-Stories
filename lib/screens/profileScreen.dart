@@ -2,16 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_stories/resources/auth_methods.dart';
-//import 'package:instagram_clone_flutter/resources/firestore_methods.dart';
-//import 'package:movie_stories/resour';
+import 'package:movie_stories/resources/firestore_methods.dart';
 import 'package:movie_stories/screens/loginScreen.dart';
-//import 'package:instagram_clone_flutter/utils/colors.dart';
 import 'package:movie_stories/utils/colors.dart';
-//import 'package:instagram_clone_flutter/utils/utils.dart';
 import 'package:movie_stories/utils/utils.dart';
-//import 'package:instagram_clone_flutter/widgets/follow_button.dart';
-//import 'package:movie_stories/widgets/';
-
+import 'package:movie_stories/widgets/follow_button.dart';
 
 //TODO hacer follow button
 
@@ -62,10 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .contains(FirebaseAuth.instance.currentUser!.uid);
       setState(() {});
     } catch (e) {
-      showSnackBar(
-        context,
-        e.toString(),
-      );
+      showSnackBar(e.toString(), context);
     }
     setState(() {
       isLoading = false;
